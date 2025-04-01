@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trivia de Geografía</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+        }
+        .container {
+            max-width: 600px;
+            margin: 20px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        }
+        .question {
+            font-size: 20px;
+            margin-bottom: 10px;
+        }
+        .options button {
+            display: block;
+            width: 100%;
+            margin: 5px 0;
+            padding: 10px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .correct { background-color: #4CAF50; color: white; }
+        .incorrect { background-color: #FF6347; color: white; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Trivia de Geografía 🌍</h1>
+        <p class="question" id="question"></p>
+        <div class="options" id="options"></div>
+        <button id="next" class="hidden">Siguiente ➡️</button>
+        <p id="result" class="hidden"></p>
+    </div>
+    
+    <script>
+        const questions = [
+            { q: "¿Cuál es el país más grande del mundo?", a: ["China", "Estados Unidos", "Rusia", "Canadá"], correct: 2 },
+            { q: "¿Cuál es la capital de Brasil?", a: ["Buenos Aires", "Brasilia", "Río de Janeiro", "Sao Paulo"], correct: 1 },
+            { q: "¿Qué océano es el más grande?", a: ["Atlántico", "Índico", "Ártico", "Pacífico"], correct: 3 }
+        ];
+
+        let currentQuestion = 0;
+        let score = 0;
+
+        function loadQuestion() {
+            document.getElementById("question").innerText = questions[currentQuestion].q;
+            const optionsContainer = document.getElementById("options");
+            optionsContainer.innerHTML = "";
+            
+            questions[currentQuestion].a.forEach((option, index) => {
+                const btn = document.createElement("button");
+                btn.innerText = option;
+                btn.onclick = () => checkAnswer(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+            
+            document.getElementById("next").classList.add("hidden");
+        }
+
+        function checkAnswer(index, btn) {
+            const correctIndex = questions[currentQuestion].correct;
+            const buttons = document.querySelectorAll(".options button");
+            
+            buttons.forEach((b, i) => {
+                if (i === correctIndex) {
+                    b.classList.add("correct");
+                    b.innerHTML += " ✅";
+                } else if (i === index) {
+                    b.classList.add("incorrect");
+                    b.innerHTML += " ❌";
+                }
+                b.disabled = true;
+            });
+            
+            if (index === correctIndex) score++;
+            document.getElementById("next").classList.remove("hidden");
+        }
+
+        document.getElementById("next").onclick = () => {
+            currentQuestion++;
+            if (currentQuestion < questions.length) {
+                loadQuestion();
+            } else {
+                showResults();
+            }
+        };
+
+        function showResults() {
+            document.getElementById("question").innerText = "Trivia Finalizada!";
+            document.getElementById("options").innerHTML = "";
+            document.getElementById("next").classList.add("hidden");
+            let resultText = `Obtuviste ${score} de ${questions.length} puntos. `;
+            resultText += score === questions.length ? "🎉 ¡Excelente! Conoces muy bien la geografía." :
+                          score >= questions.length / 2 ? "😊 ¡Bien hecho! Aún puedes mejorar." :
+                          "📚 ¡Sigue aprendiendo más sobre geografía!";
+            document.getElementById("result").innerText = resultText;
+            document.getElementById("result").classList.remove("hidden");
+        }
+
+        loadQuestion();
+    </script>
+</body>
+</html>
